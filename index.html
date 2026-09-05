@@ -115,9 +115,9 @@
                     <p class="font-bold text-gray-900 text-base mb-1 line-clamp-1" id="checkoutProductName"></p>
                     <div class="flex justify-between text-sm mt-2"><span class="text-gray-600 font-medium">একক মূল্য:</span><span id="checkoutProductPrice" class="font-bold text-blue-700 text-base">৳0</span></div>
                     
-                    <!-- Dynamic Category Specific Options Container (Larger & Colored Text) -->
+                    <!-- Dynamic Category Specific Options Container -->
                     <div id="dynamicOptionsContainer" class="mt-3 pt-3 border-t border-blue-200">
-                        <!-- ক্যাটাগরি ভেদে এখানে ইনপুট/সিলেক্ট অপশন এবং কোয়ান্টিটি কাউন্টার লোড হবে -->
+                        <!-- ক্যাটাগরি ভেদে এখানে নির্দিষ্ট মাপ ও অপশন লোড হবে -->
                     </div>
 
                     <!-- Delivery Charge Selection -->
@@ -267,6 +267,11 @@
                     `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10 shadow-sm">SALE</div>` : '';
                 const stockOverlay = !p.inStock ? `<div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm z-10">Out of Stock</div>` : '';
 
+                let displayPrice = `৳${p.price}`;
+                if (p.category === 'Food' && p.foodPrices) {
+                    displayPrice = `৳${p.foodPrices.full || p.price}`;
+                }
+
                 grid.innerHTML += `
                     <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col relative group">
                         ${badgeHTML} ${stockOverlay}
@@ -277,7 +282,7 @@
                             <h3 class="text-sm font-bold text-gray-800 line-clamp-2 h-10">${p.name}</h3>
                             <div class="mt-2 mb-1 flex items-center">
                                 ${discountHTML}
-                                <p class="text-blue-600 font-extrabold text-lg">৳${p.price}</p>
+                                <p class="text-blue-600 font-extrabold text-lg">${displayPrice}</p>
                             </div>
                             <button onclick="openCheckoutModal('${p.id}')" class="mt-auto w-full text-sm font-bold py-2 rounded-lg transition ${p.inStock ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}" ${!p.inStock ? 'disabled' : ''}>
                                 <i class="fas ${p.inStock ? 'fa-cart-plus' : 'fa-times'}"></i> অর্ডার করুন
@@ -294,12 +299,9 @@
             
             quantity = 1;
             document.getElementById("checkoutProductName").innerText = selectedProduct.name;
-            document.getElementById("checkoutProductPrice").innerText = `৳${selectedProduct.price}`;
             
-            // রেন্ডার ডাইনামিক অপশন ক্যাটাগরি অনুযায়ী
-            renderDynamicOptions(selectedProduct.category);
+            renderDynamicOptions(selectedProduct);
 
-            // ডিফল্টভাবে পৌরসভার বাইরে (৫০ টাকা) সিলেক্ট থাকবে
             document.getElementById("deliveryChargeSelect").value = "50";
             updateTotalPrice();
             
@@ -308,17 +310,17 @@
             openModal('checkoutModal');
         };
 
-        // ক্যাটাগরি অনুযায়ী ডাইনামিক ইনপুট ও কাউন্টার তৈরি করা (বড় ও রঙিন ফন্টসহ)
-        function renderDynamicOptions(category) {
+        function renderDynamicOptions(product) {
             const container = document.getElementById("dynamicOptionsContainer");
             let html = '';
+            const category = product.category;
 
             if (category === 'Grocery') {
                 html = `
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <div>
                             <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-balance-scale text-blue-600 mr-1"></i> মাপের একক:</label>
-                            <select id="itemUnit" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                            <select id="groceryUnit" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
                                 <option value="কেজি (KG)">কেজি (KG)</option>
                                 <option value="গ্রাম (Gram)">গ্রাম (Gram)</option>
                                 <option value="লিটার (Liter)">লিটার (Liter)</option>
@@ -326,8 +328,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-sort-numeric-up text-blue-600 mr-1"></i> পরিমাণ/মাপা:</label>
-                            <input type="text" id="itemSizeOrNote" placeholder="যেমন: ১ কেজি বা ৫ লিটার" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
+                            <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-sort-numeric-up text-blue-600 mr-1"></i> পরিমাণ:</label>
+                            <input type="text" id="groceryNote" placeholder="যেমন: ১ বা ৫০০" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
                         </div>
                     </div>
                 `;
@@ -335,7 +337,7 @@
                 html = `
                     <div class="mb-3">
                         <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-tshirt text-blue-600 mr-1"></i> সাইজ বা প্যান্টের মাপ নির্বাচন করুন:</label>
-                        <select id="itemSizeOrNote" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                        <select id="cosmeticsSize" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
                             <option value="Free Size">Free Size (স্ট্যান্ডার্ড)</option>
                             <option value="M">M (মিডিয়াম)</option>
                             <option value="L">L (লার্জ)</option>
@@ -353,13 +355,24 @@
                     </div>
                 `;
             } else if (category === 'Food') {
+                const fp = product.foodPrices || {};
+                const fullP = fp.full || product.price || 0;
+                const halfP = fp.half || 0;
+                const pieceP = fp.piece || 0;
+
+                let optionsHTML = `<option value="ফুল প্লেট" data-price="${fullP}">ফুল প্লেট (৳${fullP})</option>`;
+                if(halfP > 0) {
+                    optionsHTML += `<option value="হাফ প্লেট" data-price="${halfP}">হাফ প্লেট (৳${halfP})</option>`;
+                }
+                if(pieceP > 0) {
+                    optionsHTML += `<option value="পিস" data-price="${pieceP}">পিস (৳${pieceP})</option>`;
+                }
+
                 html = `
                     <div class="mb-3">
-                        <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-utensils text-blue-600 mr-1"></i> পরিবেশন বা সাইজ:</label>
-                        <select id="itemSizeOrNote" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
-                            <option value="ফুল প্লেট (Full)">ফুল প্লেট (Full)</option>
-                            <option value="হাফ প্লেট (Half)">হাফ প্লেট (Half)</option>
-                            <option value="পিস (Piece)">পিস (Piece)</option>
+                        <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-utensils text-blue-600 mr-1"></i> পরিবেশন বা সাইজ নির্বাচন করুন:</label>
+                        <select id="foodSize" onchange="updateTotalPrice()" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                            ${optionsHTML}
                         </select>
                     </div>
                 `;
@@ -367,12 +380,11 @@
                 html = `
                     <div class="mb-3">
                         <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-info-circle text-blue-600 mr-1"></i> নোট / কালার / মডেল:</label>
-                        <input type="text" id="itemSizeOrNote" placeholder="পছন্দের কালার বা বিবরণ দিন" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
+                        <input type="text" id="generalNote" placeholder="পছন্দের কালার বা বিবরণ দিন" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
                     </div>
                 `;
             }
 
-            // কোয়ান্টিটি কাউন্টার (`+` / `-`) যোগ করা (বড় ও আকর্ষণীয় সাইজে)
             html += `
                 <div class="flex items-center justify-between pt-2">
                     <span class="text-sm font-extrabold text-blue-900"><i class="fas fa-layer-group text-blue-600 mr-1"></i> কত পিস / পরিমাণ:</span>
@@ -396,10 +408,22 @@
 
         window.updateTotalPrice = () => {
             if (!selectedProduct) return;
+
+            let baseUnitPrice = Number(selectedProduct.price);
+            
+            if (selectedProduct.category === 'Food') {
+                const foodSizeEl = document.getElementById("foodSize");
+                if (foodSizeEl) {
+                    const selectedOption = foodSizeEl.options[foodSizeEl.selectedIndex];
+                    baseUnitPrice = Number(selectedOption.getAttribute('data-price')) || baseUnitPrice;
+                }
+            }
+
             const deliveryFee = Number(document.getElementById("deliveryChargeSelect").value);
-            const productTotalPrice = Number(selectedProduct.price) * quantity;
+            const productTotalPrice = baseUnitPrice * quantity;
             const total = productTotalPrice + deliveryFee;
             
+            document.getElementById("checkoutProductPrice").innerText = `৳${baseUnitPrice}`;
             document.getElementById("checkoutDeliveryFee").innerText = `৳${deliveryFee}`;
             document.getElementById("checkoutTotalPrice").innerText = `৳${total}`;
         };
@@ -413,14 +437,29 @@
             const deliveryFee = Number(document.getElementById("deliveryChargeSelect").value);
             const deliveryAreaText = deliveryFee === 30 ? "পৌরসভার ভিতরে" : "পৌরসভার বাইরে";
             
-            const sizeOrNoteEl = document.getElementById("itemSizeOrNote");
-            const unitEl = document.getElementById("itemUnit");
-            
+            let baseUnitPrice = Number(selectedProduct.price);
             let customDetails = `পরিমাণ: ${quantity} পিস`;
-            if (sizeOrNoteEl) customDetails += `, সাইজ/মাপ: ${sizeOrNoteEl.value}`;
-            if (unitEl) customDetails += ` (${unitEl.value})`;
+            
+            if (selectedProduct.category === 'Grocery') {
+                const gUnit = document.getElementById("groceryUnit")?.value || '';
+                const gNote = document.getElementById("groceryNote")?.value || '';
+                customDetails = `মাপ: ${gNote} ${gUnit} (পিস: ${quantity})`;
+            } else if (selectedProduct.category === 'Cosmetics') {
+                const cSize = document.getElementById("cosmeticsSize")?.value || '';
+                customDetails = `সাইজ: ${cSize}, পিস: ${quantity}`;
+            } else if (selectedProduct.category === 'Food') {
+                const foodSizeEl = document.getElementById("foodSize");
+                if (foodSizeEl) {
+                    const selectedOption = foodSizeEl.options[foodSizeEl.selectedIndex];
+                    baseUnitPrice = Number(selectedOption.getAttribute('data-price')) || baseUnitPrice;
+                    customDetails = `পরিবেশন: ${foodSizeEl.value}, পিস: ${quantity}`;
+                }
+            } else {
+                const genNote = document.getElementById("generalNote")?.value || '';
+                customDetails = genNote ? `নোট: ${genNote}, পিস: ${quantity}` : `পরিমাণ: ${quantity} পিস`;
+            }
 
-            const productTotalPrice = Number(selectedProduct.price) * quantity;
+            const productTotalPrice = baseUnitPrice * quantity;
 
             const orderData = {
                 deviceId, 
@@ -433,6 +472,7 @@
                 customerAddress: document.getElementById("customerAddress").value,
                 customDetails: customDetails,
                 quantity: quantity,
+                unitPrice: baseUnitPrice,
                 deliveryArea: deliveryAreaText,
                 deliveryFee: deliveryFee,
                 totalAmount: productTotalPrice + deliveryFee,
