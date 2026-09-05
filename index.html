@@ -196,7 +196,6 @@
         localStorage.setItem("localDeviceId", deviceId);
 
         /* --- SMART BACK BUTTON NAVIGATION HANDLER --- */
-        // অ্যাপ লোড হওয়ার সাথে সাথে হোম স্টেট তৈরি করা
         history.replaceState({ page: 'home' }, '', '');
 
         function pushNewState(pageName) {
@@ -204,7 +203,6 @@
         }
 
         window.addEventListener('popstate', (event) => {
-            // যদি মডাল খোলা থাকে তা বন্ধ করা
             const activeModals = ['imageModal', 'checkoutModal', 'ordersModal'];
             let modalClosed = false;
 
@@ -216,14 +214,12 @@
                 }
             });
 
-            // সাইডবার খোলা থাকলে তা বন্ধ করা
             const sidebar = document.getElementById("sidebarMenu");
             if (sidebar && !sidebar.classList.contains("-translate-x-full")) {
                 closeSidebarUIOnly();
                 modalClosed = true;
             }
 
-            // কোনো পপআপ বন্ধ না হয়ে থাকলে এবং ইউজার অন্য ক্যাটাগরিতে থাকলে হোমপেজে নিয়ে আসবে
             if (!modalClosed) {
                 if (event.state && event.state.page === 'home') {
                     resetToHomeUI();
@@ -340,7 +336,10 @@
 
                 let displayPrice = `৳${p.price}`;
                 if (p.category === 'Food' && p.foodPrices) {
-                    displayPrice = `৳${p.foodPrices.full || p.price}`;
+                    const fp = p.foodPrices;
+                    if (Number(fp.full) > 0) displayPrice = `৳${fp.full}`;
+                    else if (Number(fp.half) > 0) displayPrice = `৳${fp.half}`;
+                    else if (Number(fp.piece) > 0) displayPrice = `৳${fp.piece}`;
                 }
 
                 grid.innerHTML += `
@@ -427,16 +426,17 @@
                 `;
             } else if (category === 'Food') {
                 const fp = product.foodPrices || {};
-                const fullP = fp.full || product.price || 0;
-                const halfP = fp.half || 0;
-                const pieceP = fp.piece || 0;
+                const fullP = Number(fp.full) || 0;
+                const halfP = Number(fp.half) || 0;
+                const pieceP = Number(fp.piece) || 0;
 
-                let optionsHTML = `<option value="ফুল প্লেট" data-price="${fullP}">ফুল প্লেট (৳${fullP})</option>`;
-                if(halfP > 0) {
-                    optionsHTML += `<option value="হাফ প্লেট" data-price="${halfP}">হাফ প্লেট (৳${halfP})</option>`;
-                }
-                if(pieceP > 0) {
-                    optionsHTML += `<option value="পিস" data-price="${pieceP}">পিস (৳${pieceP})</option>`;
+                let optionsHTML = '';
+                if (fullP > 0) optionsHTML += `<option value="ফুল প্লেট" data-price="${fullP}">ফুল প্লেট (৳${fullP})</option>`;
+                if (halfP > 0) optionsHTML += `<option value="হাফ প্লেট" data-price="${halfP}">হাফ প্লেট (৳${halfP})</option>`;
+                if (pieceP > 0) optionsHTML += `<option value="পিস" data-price="${pieceP}">পিস (৳${pieceP})</option>`;
+
+                if (!optionsHTML) {
+                    optionsHTML = `<option value="সাধারণ" data-price="${product.price}">সাধারণ (৳${product.price})</option>`;
                 }
 
                 html = `
