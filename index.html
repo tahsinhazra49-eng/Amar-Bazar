@@ -20,58 +20,59 @@
         .toast-show { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans pb-20">
+<body class="bg-[#FDFBF7] text-gray-900 font-sans pb-20">
     <!-- Sidebar Overlay & Menu -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-50 hidden-modal transition-opacity" onclick="closeSidebar()"></div>
-    <div id="sidebarMenu" class="fixed top-0 left-0 w-64 h-full bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300">
-        <div class="p-5 border-b bg-blue-600 text-white flex justify-between items-center">
+    <div id="sidebarMenu" class="fixed top-0 left-0 w-64 h-full bg-[#FDFBF7] shadow-2xl z-50 transform -translate-x-full transition-transform duration-300">
+        <div class="p-5 border-b bg-black text-white flex justify-between items-center">
             <h2 class="text-xl font-bold"><i class="fas fa-user-circle mr-2"></i>প্রোফাইল</h2>
             <button onclick="closeSidebar()"><i class="fas fa-times text-xl"></i></button>
         </div>
-        <ul class="p-4 space-y-4 font-medium text-gray-700">
-            <li class="cursor-pointer hover:text-blue-600" onclick="closeSidebar(); filterCategory('all')"><i class="fas fa-home w-6"></i> হোমপেজ</li>
-            <li class="cursor-pointer hover:text-blue-600" onclick="closeSidebar(); openModal('ordersModal'); loadOrders();"><i class="fas fa-box w-6"></i> আমার অর্ডারসমূহ</li>
-            <li class="cursor-pointer hover:text-blue-600" onclick="closeSidebar()"><i class="fas fa-bell w-6"></i> অফার ও নোটিশ</li>
+        <ul class="p-4 space-y-4 font-bold text-gray-800">
+            <li class="cursor-pointer hover:text-gray-500" onclick="closeSidebar(); filterCategory('all')"><i class="fas fa-home w-6 text-black"></i> হোমপেজ</li>
+            <li class="cursor-pointer hover:text-gray-500" onclick="closeSidebar(); openModal('ordersModal'); loadOrders();"><i class="fas fa-box w-6 text-black"></i> আমার অর্ডারসমূহ</li>
+            <li class="cursor-pointer hover:text-gray-500" onclick="closeSidebar()"><i class="fas fa-bell w-6 text-black"></i> অফার ও নোটিশ</li>
             <li>
-                <a href="https://wa.me/8801763497026" target="_blank" rel="noopener noreferrer" class="flex items-center hover:text-blue-600">
-                    <i class="fab fa-whatsapp w-6 text-green-600 text-lg"></i> লাইভ হেল্পলাইন
+                <a href="https://wa.me/8801763497026" target="_blank" rel="noopener noreferrer" class="flex items-center hover:text-gray-500">
+                    <i class="fab fa-whatsapp w-6 text-black text-lg"></i> লাইভ হেল্পলাইন
                 </a>
             </li>
         </ul>
     </div>
 
     <!-- Header & Navigation -->
-    <header class="bg-white shadow-sm sticky top-0 z-40 border-b">
+    <header class="bg-[#FDFBF7] shadow-sm sticky top-0 z-40 border-b border-gray-200">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <button onclick="openSidebar()" class="text-gray-600 text-xl md:hidden"><i class="fas fa-bars"></i></button>
-                <h1 class="text-xl md:text-2xl font-extrabold text-blue-600 flex items-center gap-2 cursor-pointer" onclick="filterCategory('all')">
+                <button onclick="openSidebar()" class="text-black text-2xl md:hidden"><i class="fas fa-bars"></i></button>
+                <h1 class="text-xl md:text-2xl font-extrabold text-black flex items-center gap-2 cursor-pointer" onclick="filterCategory('all')">
                     <i class="fas fa-shopping-cart"></i> আমাদের বাজার
                 </h1>
             </div>
             
             <div class="hidden md:flex flex-1 max-w-lg mx-8 relative">
-                <input type="text" id="searchInput" placeholder="কী খুঁজছেন?..." class="w-full border border-gray-300 rounded-full px-5 py-2.5 focus:outline-none focus:border-blue-500 shadow-sm">
-                <button class="absolute right-1 top-1 bg-blue-600 text-white px-5 py-1.5 rounded-full hover:bg-blue-700"><i class="fas fa-search"></i></button>
+                <input type="text" id="searchInput" placeholder="কী খুঁজছেন?..." class="w-full border-2 border-black bg-transparent rounded-full px-5 py-2.5 focus:outline-none font-bold text-black placeholder-gray-500">
+                <button class="absolute right-1 top-1 bg-black text-white px-5 py-1.5 rounded-full hover:bg-gray-800"><i class="fas fa-search"></i></button>
             </div>
             
             <div class="relative cursor-pointer hover:scale-105 transition" onclick="openModal('ordersModal'); loadOrders();">
-                <div class="bg-blue-50 text-blue-600 p-2 rounded-full"><i class="fas fa-shopping-bag text-xl"></i></div>
-                <span id="orderBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                <div class="text-black p-2"><i class="fas fa-shopping-bag text-2xl"></i></div>
+                <span id="orderBadge" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
             </div>
         </div>
         
-        <div class="md:hidden px-4 pb-3 pt-1">
-            <input type="text" id="mobileSearchInput" placeholder="প্রোডাক্ট খুঁজুন..." class="w-full border border-gray-300 rounded-full px-4 py-2.5 text-sm focus:outline-none shadow-sm">
+        <div class="md:hidden px-4 pb-3 pt-1 relative">
+            <input type="text" id="mobileSearchInput" placeholder="প্রোডাক্ট খুঁজুন..." class="w-full border-2 border-black bg-transparent rounded-full px-4 py-2.5 text-sm font-bold text-black focus:outline-none placeholder-gray-500">
+            <i class="fas fa-search absolute right-8 top-3.5 text-black"></i>
         </div>
 
         <!-- Horizontal Category Slider -->
-        <div class="overflow-x-auto whitespace-nowrap px-4 py-2 bg-gray-50 border-t flex gap-3 text-sm font-semibold" id="categorySlider">
-            <button onclick="filterCategory('all')" class="cat-btn px-4 py-1.5 rounded-full bg-blue-600 text-white shadow-sm">সব প্রোডাক্ট</button>
-            <button onclick="filterCategory('Grocery')" class="cat-btn px-4 py-1.5 rounded-full bg-white border text-gray-600">মুদি মাল</button>
-            <button onclick="filterCategory('Cosmetics')" class="cat-btn px-4 py-1.5 rounded-full bg-white border text-gray-600">কসমেটিক্স ও পোশাক</button>
-            <button onclick="filterCategory('Electronics')" class="cat-btn px-4 py-1.5 rounded-full bg-white border text-gray-600">ইলেকট্রনিক্স</button>
-            <button onclick="filterCategory('Food')" class="cat-btn px-4 py-1.5 rounded-full bg-white border text-gray-600">ডাইরেক্ট ফুড</button>
+        <div class="overflow-x-auto whitespace-nowrap px-4 py-3 bg-[#FDFBF7] border-t border-gray-200 flex gap-3 text-sm font-bold" id="categorySlider">
+            <button onclick="filterCategory('all')" class="cat-btn px-5 py-2 rounded-full bg-black text-white shadow-sm border-2 border-black">সব প্রোডাক্ট</button>
+            <button onclick="filterCategory('Grocery')" class="cat-btn px-5 py-2 rounded-full bg-transparent border-2 border-black text-black">মুদি মাল</button>
+            <button onclick="filterCategory('Cosmetics')" class="cat-btn px-5 py-2 rounded-full bg-transparent border-2 border-black text-black">কসমেটিক্স ও পোশাক</button>
+            <button onclick="filterCategory('Electronics')" class="cat-btn px-5 py-2 rounded-full bg-transparent border-2 border-black text-black">ইলেকট্রনিক্স</button>
+            <button onclick="filterCategory('Food')" class="cat-btn px-5 py-2 rounded-full bg-transparent border-2 border-black text-black">ডাইরেক্ট ফুড</button>
         </div>
     </header>
 
@@ -83,91 +84,98 @@
         </div>
     </div>
 
-    <!-- Product Catalog -->
+    <!-- Product Catalog (Big View Mode) -->
     <main class="max-w-6xl mx-auto mt-6 px-4">
-        <div class="flex justify-between items-end mb-4 border-b pb-2">
-            <h2 id="categoryTitle" class="text-lg md:text-xl font-bold text-gray-700">সব প্রোডাক্ট</h2>
+        <div class="flex justify-between items-end mb-4 border-b border-gray-300 pb-2">
+            <h2 id="categoryTitle" class="text-lg md:text-xl font-extrabold text-black uppercase tracking-wider">সব প্রোডাক্ট</h2>
         </div>
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            <div class="border rounded-xl h-64 skeleton"></div>
-            <div class="border rounded-xl h-64 skeleton"></div>
-            <div class="border rounded-xl h-64 skeleton"></div>
-            <div class="border rounded-xl h-64 skeleton"></div>
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div class="border rounded-xl h-80 skeleton"></div>
+            <div class="border rounded-xl h-80 skeleton"></div>
+            <div class="border rounded-xl h-80 skeleton"></div>
         </div>
     </main>
 
     <!-- Image Zoom Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black/90 z-50 hidden-modal flex items-center justify-center p-4">
-        <button onclick="closeModal('imageModal')" class="absolute top-5 right-5 text-white text-3xl hover:text-red-500"><i class="fas fa-times"></i></button>
-        <img id="zoomedImage" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
+    <div id="imageModal" class="fixed inset-0 bg-[#FDFBF7]/95 z-50 hidden-modal flex items-center justify-center p-4 backdrop-blur-sm">
+        <button onclick="closeModal('imageModal')" class="absolute top-5 right-5 text-black text-4xl hover:text-red-500"><i class="fas fa-times"></i></button>
+        <img id="zoomedImage" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border-4 border-black">
     </div>
 
     <!-- Checkout Modal -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/60 z-50 hidden-modal flex items-end md:items-center justify-center">
-        <div class="bg-white w-full md:max-w-md rounded-t-2xl md:rounded-xl shadow-2xl relative max-h-[90vh] flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center bg-blue-50 sticky top-0 md:rounded-t-xl z-10">
-                <h2 class="text-lg font-bold text-gray-800">অর্ডার কনফার্মেশন</h2>
-                <button onclick="closeModal('checkoutModal')" class="text-gray-500 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+        <div class="bg-[#FDFBF7] w-full md:max-w-md rounded-t-2xl md:rounded-xl shadow-2xl relative max-h-[90vh] flex flex-col border-t-4 border-black md:border-4">
+            <div class="p-4 border-b border-gray-300 flex justify-between items-center sticky top-0 md:rounded-t-xl z-10 bg-[#FDFBF7]">
+                <h2 class="text-lg font-extrabold text-black uppercase tracking-wide">অর্ডার কনফার্মেশন</h2>
+                <button onclick="closeModal('checkoutModal')" class="text-black hover:text-red-500 text-2xl"><i class="fas fa-times"></i></button>
             </div>
             
             <div class="p-5 overflow-y-auto" id="checkoutContent">
-                <div class="mb-4 bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
-                    <p class="font-bold text-gray-900 text-base mb-1 line-clamp-1" id="checkoutProductName"></p>
-                    <div class="flex justify-between text-sm mt-2"><span class="text-gray-600 font-medium">একক মূল্য:</span><span id="checkoutProductPrice" class="font-bold text-blue-700 text-base">৳0</span></div>
+                <div class="mb-5 bg-white p-4 rounded-xl border-2 border-gray-200 shadow-sm">
+                    <p class="font-bold text-black text-lg mb-1" id="checkoutProductName"></p>
                     
-                    <div id="dynamicOptionsContainer" class="mt-3 pt-3 border-t border-blue-200"></div>
+                    <!-- প্রোডাক্ট কোয়ালিটি ও বিবরণ শো করার জায়গা -->
+                    <div id="checkoutProductMeta" class="mt-2 space-y-1 text-xs text-gray-700"></div>
 
-                    <div class="mt-3 pt-3 border-t border-blue-200">
-                        <label class="block text-sm font-bold text-indigo-900 mb-1.5"><i class="fas fa-map-marker-alt text-red-500 mr-1"></i> ডেলিভারি এলাকা নির্বাচন করুন:</label>
-                        <select id="deliveryChargeSelect" onchange="updateTotalPrice()" class="w-full border-2 border-indigo-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-indigo-700 focus:border-blue-500 shadow-sm">
+                    <div class="flex justify-between text-sm mt-3 pt-3 border-t border-gray-100"><span class="text-gray-600 font-bold">একক মূল্য:</span><span id="checkoutProductPrice" class="font-extrabold text-black text-lg">৳0</span></div>
+                    
+                    <div id="dynamicOptionsContainer" class="mt-4 pt-4 border-t-2 border-gray-100"></div>
+
+                    <div class="mt-4 pt-4 border-t-2 border-gray-100">
+                        <label class="block text-sm font-bold text-black mb-2"><i class="fas fa-map-marker-alt text-black mr-1"></i> ডেলিভারি এলাকা নির্বাচন করুন:</label>
+                        <select id="deliveryChargeSelect" onchange="updateTotalPrice()" class="w-full border-2 border-black bg-transparent rounded-lg px-3.5 py-2.5 text-sm font-bold text-black focus:outline-none shadow-sm cursor-pointer">
                             <option value="30">পৌরসভার ভিতরে (৩০ টাকা)</option>
                             <option value="50" selected>পৌরসভার বাইরে (৫০ টাকা)</option>
                         </select>
                     </div>
 
-                    <div class="flex justify-between text-sm mt-3"><span class="text-gray-600 font-medium">ডেলিভারি চার্জ:</span><span id="checkoutDeliveryFee" class="font-bold text-gray-800">৳50</span></div>
-                    <div class="flex justify-between text-indigo-700 mt-2.5 font-extrabold text-xl border-t border-blue-200 pt-2.5"><span>সর্বমোট:</span><span id="checkoutTotalPrice" class="text-red-600 text-2xl">৳0</span></div>
+                    <div class="flex justify-between text-sm mt-4"><span class="text-gray-600 font-bold">ডেলিভারি চার্জ:</span><span id="checkoutDeliveryFee" class="font-extrabold text-black">৳50</span></div>
+                    <div class="flex justify-between items-center text-black mt-3 font-extrabold text-xl border-t-2 border-black pt-3">
+                        <span>সর্বমোট:</span>
+                        <span id="checkoutTotalPrice" class="text-2xl">৳0</span>
+                    </div>
                 </div>
 
-                <form id="checkoutForm" class="space-y-3">
-                    <input type="text" id="customerName" required placeholder="আপনার নাম *" class="w-full border rounded-lg px-4 py-2.5 text-sm focus:border-blue-500">
-                    <input type="tel" id="customerPhone" required placeholder="মোবাইল নম্বর *" pattern="[0-9]{11}" class="w-full border rounded-lg px-4 py-2.5 text-sm focus:border-blue-500">
-                    <textarea id="customerAddress" required placeholder="ডেলিভারি ঠিকানা *" rows="2" class="w-full border rounded-lg px-4 py-2.5 text-sm focus:border-blue-500"></textarea>
-                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-md flex justify-center gap-2">
-                        <i class="fas fa-check-circle mt-1"></i> অর্ডার সাবমিট করুন
+                <form id="checkoutForm" class="space-y-4">
+                    <input type="text" id="customerName" required placeholder="আপনার নাম *" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-sm font-bold text-black focus:border-black focus:outline-none bg-white">
+                    <input type="tel" id="customerPhone" required placeholder="মোবাইল নম্বর *" pattern="[0-9]{11}" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-sm font-bold text-black focus:border-black focus:outline-none bg-white">
+                    <textarea id="customerAddress" required placeholder="ডেলিভারি ঠিকানা *" rows="2" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-sm font-bold text-black focus:border-black focus:outline-none bg-white"></textarea>
+                    
+                    <button type="submit" class="w-full bg-black text-white uppercase tracking-widest font-extrabold py-4 rounded-lg hover:bg-gray-900 shadow-xl flex justify-center items-center gap-2 transition-all">
+                        <i class="fas fa-check-circle text-lg"></i> সাবমিট অর্ডার
                     </button>
                 </form>
             </div>
             
-            <div id="successAnimation" class="hidden flex flex-col items-center justify-center p-8 bg-white h-full">
+            <div id="successAnimation" class="hidden flex flex-col items-center justify-center p-8 bg-[#FDFBF7] h-full rounded-b-xl">
                 <lottie-player src="https://assets8.lottiefiles.com/packages/lf20_6sxyjynd.json" background="transparent" speed="1" style="width: 200px; height: 200px;" loop autoplay></lottie-player>
-                <h3 class="text-xl font-bold text-green-600 mt-4 text-center">অর্ডার সফল হয়েছে!</h3>
-                <p class="text-sm text-gray-500 text-center mt-2">আপনার অর্ডারটি গ্রহণ করা হয়েছে। আমরা খুব দ্রুত আপনার সাথে যোগাযোগ করব।</p>
-                <button onclick="closeModal('checkoutModal'); loadOrders();" class="mt-6 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold shadow-md">ঠিক আছে</button>
+                <h3 class="text-2xl font-extrabold text-black mt-4 text-center">অর্ডার সফল হয়েছে!</h3>
+                <p class="text-sm text-gray-600 font-bold text-center mt-2">আপনার অর্ডারটি গ্রহণ করা হয়েছে। আমরা খুব দ্রুত আপনার সাথে যোগাযোগ করব।</p>
+                <button onclick="closeModal('checkoutModal'); loadOrders();" class="mt-8 bg-black text-white px-8 py-3 rounded-full font-extrabold shadow-md hover:bg-gray-800">ঠিক আছে</button>
             </div>
         </div>
     </div>
 
     <!-- My Orders Dashboard -->
     <div id="ordersModal" class="fixed inset-0 bg-black/60 z-50 hidden-modal flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
-                <h2 class="text-lg font-bold text-gray-800"><i class="fas fa-box-open text-blue-600 mr-2"></i> আমার অর্ডারসমূহ</h2>
-                <button onclick="closeModal('ordersModal')" class="text-gray-500 text-xl hover:text-red-500"><i class="fas fa-times"></i></button>
+        <div class="bg-[#FDFBF7] rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col border-4 border-black">
+            <div class="p-4 border-b border-gray-300 flex justify-between items-center bg-white rounded-t-lg">
+                <h2 class="text-lg font-extrabold text-black uppercase"><i class="fas fa-box-open text-black mr-2"></i> আমার অর্ডারসমূহ</h2>
+                <button onclick="closeModal('ordersModal')" class="text-black text-2xl hover:text-red-500"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-4 overflow-y-auto flex-1 space-y-3" id="ordersList">
-                <p class="text-center text-gray-500 py-10"><i class="fas fa-spinner fa-spin text-2xl"></i> লোড হচ্ছে...</p>
+            <div class="p-4 overflow-y-auto flex-1 space-y-4" id="ordersList">
+                <p class="text-center text-gray-500 py-10 font-bold"><i class="fas fa-spinner fa-spin text-2xl"></i> লোড হচ্ছে...</p>
             </div>
         </div>
     </div>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/8801763497026" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition z-40">
+    <a href="https://wa.me/8801763497026" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-black text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition z-40 border-2 border-white">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg font-semibold text-sm z-50 toast-enter hidden-modal">
+    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-3 rounded-full shadow-2xl font-extrabold text-sm z-50 toast-enter hidden-modal border border-gray-700">
         <span id="toastMsg">মেসেজ</span>
     </div>
 
@@ -195,7 +203,6 @@
         let deviceId = localStorage.getItem("localDeviceId") || ("dev_" + Math.random().toString(36).substr(2, 9));
         localStorage.setItem("localDeviceId", deviceId);
 
-        /* --- SMART BACK BUTTON NAVIGATION HANDLER --- */
         history.replaceState({ page: 'home' }, '', '');
 
         function pushNewState(pageName) {
@@ -231,13 +238,13 @@
 
         function resetToHomeUI() {
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-600');
+                btn.classList.remove('bg-black', 'text-white');
+                btn.classList.add('bg-transparent', 'text-black');
             });
             const firstBtn = document.querySelector('.cat-btn');
             if (firstBtn) {
-                firstBtn.classList.remove('bg-white', 'text-gray-600');
-                firstBtn.classList.add('bg-blue-600', 'text-white');
+                firstBtn.classList.remove('bg-transparent', 'text-black');
+                firstBtn.classList.add('bg-black', 'text-white');
             }
             document.getElementById("categoryTitle").innerText = 'সব প্রোডাক্ট';
             renderProducts(allProducts);
@@ -295,12 +302,12 @@
             }
             
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-600');
+                btn.classList.remove('bg-black', 'text-white');
+                btn.classList.add('bg-transparent', 'text-black');
             });
             if (event && event.target && event.target.classList.contains('cat-btn')) {
-                event.target.classList.remove('bg-white', 'text-gray-600');
-                event.target.classList.add('bg-blue-600', 'text-white');
+                event.target.classList.remove('bg-transparent', 'text-black');
+                event.target.classList.add('bg-black', 'text-white');
             }
 
             const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
@@ -314,7 +321,7 @@
                 allProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderProducts(allProducts);
             } catch (error) {
-                document.getElementById("productsGrid").innerHTML = `<p class="col-span-full text-center text-red-500">ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+                document.getElementById("productsGrid").innerHTML = `<p class="col-span-full text-center text-red-500 font-bold">ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
             }
         }
 
@@ -323,16 +330,17 @@
             grid.innerHTML = "";
             
             if(products.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center py-10 text-gray-500">এই ক্যাটাগরিতে কোনো প্রোডাক্ট নেই।</p>`;
+                grid.includes = `<p class="col-span-full text-center py-10 text-gray-500 font-bold">এই ক্যাটাগরিতে কোনো প্রোডাক্ট নেই।</p>`;
+                grid.innerHTML = `<p class="col-span-full text-center py-10 text-gray-500 font-bold">এই ক্যাটাগরিতে কোনো প্রোডাক্ট নেই।</p>`;
                 return;
             }
 
             products.forEach(p => {
                 const discountHTML = p.oldPrice && p.oldPrice > p.price ? 
-                    `<span class="text-xs text-gray-400 line-through mr-2">৳${p.oldPrice}</span>` : '';
+                    `<span class="text-sm text-gray-500 line-through mr-3">৳${p.oldPrice}</span>` : '';
                 const badgeHTML = p.oldPrice && p.oldPrice > p.price ? 
-                    `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10 shadow-sm">SALE</div>` : '';
-                const stockOverlay = !p.inStock ? `<div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm z-10">Out of Stock</div>` : '';
+                    `<div class="absolute top-3 left-3 bg-black text-white text-[11px] uppercase tracking-wider font-extrabold px-3 py-1.5 rounded-sm z-10 shadow-lg border border-white/20">SALE</div>` : '';
+                const stockOverlay = !p.inStock ? `<div class="absolute top-3 right-3 bg-black/90 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-sm shadow-lg z-10 border border-white/20">Out of Stock</div>` : '';
 
                 let displayPrice = `৳${p.price}`;
                 if (p.category === 'Food' && p.foodPrices) {
@@ -342,20 +350,31 @@
                     else if (Number(fp.piece) > 0) displayPrice = `৳${fp.piece}`;
                 }
 
+                // নতুন ডিসক্রিপশন ও কোয়ালিটি কার্ডের নিচে শো করার জন্য
+                const qualityText = p.quality ? `<p class="text-xs font-bold text-gray-600 mb-1"><i class="fas fa-check-circle text-black mr-1"></i>${p.quality}</p>` : '';
+                const descText = p.description ? `<p class="text-xs text-gray-500 line-clamp-2 mb-3">${p.description}</p>` : '';
+
                 grid.innerHTML += `
-                    <div class="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col relative group">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col relative group">
                         ${badgeHTML} ${stockOverlay}
-                        <div class="relative aspect-[4/3] bg-gray-50 cursor-pointer overflow-hidden" onclick="viewImage('${p.imageUrl}')">
-                            <img src="${p.imageUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        
+                        <div class="relative h-[280px] md:h-[320px] w-full bg-[#FAF8F5] cursor-pointer flex items-center justify-center p-4 border-b border-gray-100" onclick="viewImage('${p.imageUrl}')">
+                            <img src="${p.imageUrl}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500">
                         </div>
-                        <div class="p-3 flex flex-col flex-grow">
-                            <h3 class="text-sm font-bold text-gray-800 line-clamp-2 h-10">${p.name}</h3>
-                            <div class="mt-2 mb-1 flex items-center">
+                        
+                        <div class="p-5 flex flex-col flex-grow text-center bg-white">
+                            <h3 class="text-lg md:text-xl font-extrabold text-black line-clamp-2 mb-1 leading-tight">${p.name}</h3>
+                            ${qualityText}
+                            ${descText}
+                            
+                            <div class="mt-auto mb-4 flex items-center justify-center">
                                 ${discountHTML}
-                                <p class="text-blue-600 font-extrabold text-lg">${displayPrice}</p>
+                                <p class="text-black font-extrabold text-3xl tracking-tight">${displayPrice}</p>
                             </div>
-                            <button onclick="openCheckoutModal('${p.id}')" class="mt-auto w-full text-sm font-bold py-2 rounded-lg transition ${p.inStock ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}" ${!p.inStock ? 'disabled' : ''}>
-                                <i class="fas ${p.inStock ? 'fa-cart-plus' : 'fa-times'}"></i> অর্ডার করুন
+                            
+                            <!-- অর্ডার করুন বাটন সম্পূর্ণ কালো ব্যাকগ্রাউন্ড এবং সাদা টেক্সট -->
+                            <button onclick="openCheckoutModal('${p.id}')" class="w-full bg-black text-white font-extrabold uppercase tracking-widest text-sm py-4 rounded-xl transition-all ${p.inStock ? 'hover:bg-gray-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}" ${!p.inStock ? 'disabled' : ''}>
+                                <i class="fas ${p.inStock ? 'fa-cart-arrow-down' : 'fa-times'} mr-1 text-lg"></i> অর্ডার করুন
                             </button>
                         </div>
                     </div>
@@ -370,6 +389,16 @@
             quantity = 1;
             document.getElementById("checkoutProductName").innerText = selectedProduct.name;
             
+            // মোডাল উইন্ডোতে কোয়ালিটি ও বিবরণ সুন্দরভাবে দেখানোর ব্যবস্থা
+            let metaHtml = '';
+            if (selectedProduct.quality) {
+                metaHtml += `<p><strong class="text-black">কোয়ালিটি:</strong> ${selectedProduct.quality}</p>`;
+            }
+            if (selectedProduct.description) {
+                metaHtml += `<p class="text-gray-600"><strong class="text-black">বিবরণ:</strong> ${selectedProduct.description}</p>`;
+            }
+            document.getElementById("checkoutProductMeta").innerHTML = metaHtml;
+
             renderDynamicOptions(selectedProduct);
 
             document.getElementById("deliveryChargeSelect").value = "50";
@@ -387,10 +416,10 @@
 
             if (category === 'Grocery') {
                 html = `
-                    <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
-                            <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-balance-scale text-blue-600 mr-1"></i> মাপের একক:</label>
-                            <select id="groceryUnit" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                            <label class="block text-xs font-extrabold text-black mb-2"><i class="fas fa-balance-scale text-black mr-1"></i> মাপের একক:</label>
+                            <select id="groceryUnit" class="w-full border-2 border-black bg-transparent rounded-lg px-3 py-2 text-sm font-bold text-black focus:outline-none shadow-sm">
                                 <option value="কেজি (KG)">কেজি (KG)</option>
                                 <option value="গ্রাম (Gram)">গ্রাম (Gram)</option>
                                 <option value="লিটার (Liter)">লিটার (Liter)</option>
@@ -398,16 +427,16 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-sort-numeric-up text-blue-600 mr-1"></i> পরিমাণ:</label>
-                            <input type="text" id="groceryNote" placeholder="যেমন: ১ বা ৫০০" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
+                            <label class="block text-xs font-extrabold text-black mb-2"><i class="fas fa-sort-numeric-up text-black mr-1"></i> পরিমাণ:</label>
+                            <input type="text" id="groceryNote" placeholder="যেমন: ১ বা ৫০০" class="w-full border-2 border-black bg-transparent rounded-lg px-3 py-2 text-sm font-bold text-black focus:outline-none shadow-sm">
                         </div>
                     </div>
                 `;
             } else if (category === 'Cosmetics') {
                 html = `
-                    <div class="mb-3">
-                        <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-tshirt text-blue-600 mr-1"></i> সাইজ বা প্যান্টের মাপ নির্বাচন করুন:</label>
-                        <select id="cosmeticsSize" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                    <div class="mb-4">
+                        <label class="block text-xs font-extrabold text-black mb-2"><i class="fas fa-tshirt text-black mr-1"></i> সাইজ বা প্যান্টের মাপ নির্বাচন করুন:</label>
+                        <select id="cosmeticsSize" class="w-full border-2 border-black bg-transparent rounded-lg px-3.5 py-2.5 text-sm font-bold text-black focus:outline-none shadow-sm cursor-pointer">
                             <option value="Free Size">Free Size (স্ট্যান্ডার্ড)</option>
                             <option value="M">M (মিডিয়াম)</option>
                             <option value="L">L (লার্জ)</option>
@@ -440,29 +469,29 @@
                 }
 
                 html = `
-                    <div class="mb-3">
-                        <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-utensils text-blue-600 mr-1"></i> পরিবেশন বা সাইজ নির্বাচন করুন:</label>
-                        <select id="foodSize" onchange="updateTotalPrice()" class="w-full border-2 border-blue-200 rounded-lg px-3.5 py-2 text-sm bg-white font-bold text-blue-700 focus:border-blue-500 shadow-sm">
+                    <div class="mb-4">
+                        <label class="block text-xs font-extrabold text-black mb-2"><i class="fas fa-utensils text-black mr-1"></i> পরিবেশন বা সাইজ নির্বাচন করুন:</label>
+                        <select id="foodSize" onchange="updateTotalPrice()" class="w-full border-2 border-black bg-transparent rounded-lg px-3.5 py-2.5 text-sm font-bold text-black focus:outline-none shadow-sm cursor-pointer">
                             ${optionsHTML}
                         </select>
                     </div>
                 `;
             } else {
                 html = `
-                    <div class="mb-3">
-                        <label class="block text-xs font-extrabold text-blue-900 mb-1"><i class="fas fa-info-circle text-blue-600 mr-1"></i> নোট / কালার / মডেল:</label>
-                        <input type="text" id="generalNote" placeholder="পছন্দের কালার বা বিবরণ দিন" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 focus:border-blue-500 shadow-sm">
+                    <div class="mb-4">
+                        <label class="block text-xs font-extrabold text-black mb-2"><i class="fas fa-info-circle text-black mr-1"></i> নোট / কালার / মডেল:</label>
+                        <input type="text" id="generalNote" placeholder="পছন্দের কালার বা বিবরণ দিন" class="w-full border-2 border-black bg-transparent rounded-lg px-3 py-2.5 text-sm font-bold text-black focus:outline-none shadow-sm">
                     </div>
                 `;
             }
 
             html += `
                 <div class="flex items-center justify-between pt-2">
-                    <span class="text-sm font-extrabold text-blue-900"><i class="fas fa-layer-group text-blue-600 mr-1"></i> কত পিস / পরিমাণ:</span>
-                    <div class="flex items-center gap-3">
-                        <button type="button" onclick="changeQuantity(-1)" class="w-9 h-9 bg-gray-200 rounded-lg font-extrabold text-lg text-gray-700 hover:bg-gray-300 shadow-sm flex items-center justify-center">-</button>
-                        <span id="qtyDisplay" class="font-extrabold text-lg text-blue-700 w-6 text-center">1</span>
-                        <button type="button" onclick="changeQuantity(1)" class="w-9 h-9 bg-blue-600 text-white rounded-lg font-extrabold text-lg hover:bg-blue-700 shadow-sm flex items-center justify-center">+</button>
+                    <span class="text-sm font-extrabold text-black uppercase tracking-wider"><i class="fas fa-layer-group text-black mr-1"></i> কত পিস:</span>
+                    <div class="flex items-center gap-4">
+                        <button type="button" onclick="changeQuantity(-1)" class="w-10 h-10 border-2 border-black bg-transparent rounded-lg font-extrabold text-xl text-black hover:bg-black hover:text-white transition shadow-sm flex items-center justify-center">-</button>
+                        <span id="qtyDisplay" class="font-extrabold text-2xl text-black w-8 text-center">1</span>
+                        <button type="button" onclick="changeQuantity(1)" class="w-10 h-10 bg-black text-white rounded-lg font-extrabold text-xl hover:bg-gray-800 transition shadow-sm flex items-center justify-center">+</button>
                     </div>
                 </div>
             `;
@@ -560,7 +589,7 @@
             } catch (error) {
                 showToast("অর্ডার করতে সমস্যা হয়েছে!");
             } finally {
-                btn.innerHTML = `<i class="fas fa-check-circle mt-1"></i> অর্ডার সাবমিট করুন`;
+                btn.innerHTML = `<i class="fas fa-check-circle text-lg"></i> সাবমিট অর্ডার`;
                 btn.disabled = false;
             }
         });
@@ -575,7 +604,7 @@
                 list.innerHTML = "";
                 
                 if (snap.empty) {
-                    list.innerHTML = `<p class="text-center py-10 text-gray-500"><i class="fas fa-box-open text-3xl block mb-2"></i> কোনো অর্ডার নেই</p>`;
+                    list.innerHTML = `<p class="text-center py-10 text-gray-500 font-bold"><i class="fas fa-box-open text-3xl block mb-2 text-black"></i> কোনো অর্ডার নেই</p>`;
                     document.getElementById("orderBadge").classList.add("hidden");
                     return;
                 }
@@ -587,24 +616,24 @@
                     const order = doc.data();
                     const statusClass = order.status === "Pending" ? "text-orange-600 bg-orange-50 border-orange-200" : "text-green-600 bg-green-50 border-green-200";
                     const areaText = order.deliveryArea ? ` (${order.deliveryArea})` : "";
-                    const detailsText = order.customDetails ? `<p class="text-xs text-blue-700 font-bold mt-0.5">${order.customDetails}</p>` : "";
+                    const detailsText = order.customDetails ? `<p class="text-xs text-black font-extrabold mt-1">${order.customDetails}</p>` : "";
                     
                     list.innerHTML += `
-                        <div class="border rounded-lg p-3 flex gap-3 shadow-sm items-center relative bg-white">
-                            <img src="${order.productImage || 'https://via.placeholder.com/60'}" class="w-16 h-16 object-cover rounded-md border shrink-0">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex gap-3 shadow-sm items-center relative bg-white">
+                            <img src="${order.productImage || 'https://via.placeholder.com/60'}" class="w-16 h-16 object-cover rounded-md border border-gray-200 shrink-0">
                             <div class="flex-1 pr-16">
-                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1">${order.productName}</h4>
+                                <h4 class="font-extrabold text-sm text-black line-clamp-1">${order.productName}</h4>
                                 ${detailsText}
-                                <p class="text-xs text-gray-500 mt-0.5"><i class="fas fa-phone-alt"></i> ${order.customerPhone}</p>
-                                <p class="text-xs text-gray-500">ডেলিভারি: ৳${order.deliveryFee || 50}${areaText}</p>
-                                <p class="text-blue-600 font-bold text-sm mt-1">মোট: ৳${order.totalAmount}</p>
-                                <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded border ${statusClass}">${order.status}</span>
+                                <p class="text-xs text-gray-600 mt-1 font-bold"><i class="fas fa-phone-alt"></i> ${order.customerPhone}</p>
+                                <p class="text-xs text-gray-600 font-bold">ডেলিভারি: ৳${order.deliveryFee || 50}${areaText}</p>
+                                <p class="text-black font-extrabold text-sm mt-1 border-t pt-1 border-gray-100">মোট: ৳${order.totalAmount}</p>
+                                <span class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded border ${statusClass}">${order.status}</span>
                             </div>
                         </div>
                     `;
                 });
             } catch (error) { 
-                document.getElementById("ordersList").innerHTML = `<p class="text-center text-red-500 py-6">অর্ডার লোড করতে সমস্যা হয়েছে।</p>`;
+                document.getElementById("ordersList").innerHTML = `<p class="text-center text-red-500 py-6 font-bold">অর্ডার লোড করতে সমস্যা হয়েছে।</p>`;
             }
         };
 
