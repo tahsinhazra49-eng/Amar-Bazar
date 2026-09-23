@@ -112,6 +112,12 @@ ul{padding:0;list-style:none}
 .badge-dot{position:absolute;top:2px;right:0;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--yellow);color:var(--ink);font-size:10px;font-weight:700;display:grid;place-items:center;line-height:1}
 .badge-dot[hidden]{display:none}
 .menu-btn{display:none}
+.search-toggle-btn{display:none}
+
+/* ---------- Facebook-style auto-hide header on scroll ---------- */
+.nav{transition:transform .28s ease}
+.nav.nav-hidden{transform:translateY(-100%)}
+
 
 /* ==========================================================================
    Hero
@@ -404,10 +410,17 @@ textarea.input{resize:vertical;min-height:70px}
   .card-sm{flex-basis:calc((100% - 32px) / 3)}
   .menu-btn{display:grid}
   .nav-links{display:none}
-  .nav-inner{flex-wrap:wrap;gap:8px 10px;padding-block:10px}
+  .nav-inner{flex-wrap:nowrap;gap:8px 10px;padding-block:10px;position:relative}
   .logo-mark{width:36px;height:36px}.logo-name{font-size:21px}
-  .search{order:5;flex:1 1 100%;max-width:none;margin:0 0 4px}
+  .logo-sub{display:none}
+  .search-toggle-btn{display:grid}
   .nav-actions{margin-left:auto}
+  .search{
+    display:none;position:absolute;left:0;right:0;top:100%;
+    max-width:none;margin:0;padding:10px 16px 14px;background:var(--nav);
+    box-shadow:0 16px 26px -14px rgba(0,0,0,.4);
+  }
+  .search.open{display:block}
   .promos{grid-template-columns:1fr}
   .cat-row{justify-content:flex-start;overflow-x:auto;scrollbar-width:none;padding:2px 2px 14px;margin:-2px -24px 0;padding-inline:24px;scroll-snap-type:x proximity;scroll-padding-inline:24px}
   .cat-row::-webkit-scrollbar{display:none}
@@ -549,6 +562,11 @@ textarea.input{resize:vertical;min-height:70px}
         <span class="logo-sub">কোটালীপাড়া • অনলাইন শপ</span>
       </span>
     </a>
+
+    <button class="icon-btn search-toggle-btn" id="mobileSearchToggle" aria-label="প্রোডাক্ট খুঁজুন" aria-expanded="false" aria-controls="searchForm">
+      <svg class="i"><use href="#i-search"/></svg>
+    </button>
+
 
     <ul class="nav-links">
       <li><a class="nav-link active" href="#top" data-action="home">হোম</a></li>
@@ -1306,7 +1324,53 @@ $("#searchInput").addEventListener("input", (e) => {
   }
   syncChrome(); render();
 });
-$("#searchForm").addEventListener("submit", (e) => { e.preventDefault(); scrollToProducts(); $("#searchInput").blur(); });
+$("#searchForm").addEventListener("submit", (e) => { e.preventDefault(); scrollToProducts(); $("#searchInput").blur(); closeMobileSearch(); });
+
+/* ---------- মোবাইল সার্চ টগল (গোল আইকন) ---------- */
+function closeMobileSearch() {
+  $("#searchForm").classList.remove("open");
+  $("#mobileSearchToggle")?.setAttribute("aria-expanded", "false");
+}
+const mobileSearchBtn = $("#mobileSearchToggle");
+if (mobileSearchBtn) {
+  mobileSearchBtn.addEventListener("click", () => {
+    const isOpen = $("#searchForm").classList.toggle("open");
+    mobileSearchBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (isOpen) requestAnimationFrame(() => $("#searchInput").focus());
+  });
+  document.addEventListener("click", (e) => {
+    if (!$("#searchForm").classList.contains("open")) return;
+    if (e.target.closest("#searchForm") || e.target.closest("#mobileSearchToggle")) return;
+    closeMobileSearch();
+  });
+}
+
+/* ---------- ফেসবুক-স্টাইল স্ক্রল হেডার (নিচে স্ক্রল করলে হেডার লুকাবে, উপরে টানলে দেখাবে) ---------- */
+(function () {
+  const header = $("#top");
+  if (!header) return;
+  let lastY = window.scrollY;
+  let ticking = false;
+  const THRESHOLD = 6;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const currentY = window.scrollY;
+      if (Math.abs(currentY - lastY) > THRESHOLD) {
+        if (currentY > lastY && currentY > header.offsetHeight) {
+          header.classList.add("nav-hidden");
+          closeMobileSearch();
+        } else {
+          header.classList.remove("nav-hidden");
+        }
+        lastY = currentY;
+      }
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
 
 /* ==========================================================================
    Rail (আরও প্রোডাক্ট)
