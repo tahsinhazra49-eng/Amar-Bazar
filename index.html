@@ -1547,10 +1547,10 @@ function renderDynamicOptions(product) {
   } else if (category === "Cosmetics") {
     const sizeType = product.sizeType || "clothing";
     const custom = Array.isArray(product.sizeOptions) ? product.sizeOptions.filter(Boolean) : [];
-    if (sizeType === "none") {
+    if (sizeType === "none" || sizeType === "fabric") {
       html = "";
     } else if (custom.length) {
-      const label = sizeType === "pants" ? "প্যান্টের মাপ" : sizeType === "shoes" ? "জুতার মাপ" : "সাইজ";
+      const label = product.sizeLabel || (sizeType === "pants" ? "প্যান্টের মাপ" : sizeType === "shoes" ? "জুতার মাপ" : "সাইজ");
       html = `
         <label class="field"><span>${ico("tag")}${label}</span>
           <select id="cosmeticsSize" class="select">${custom.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join("")}</select>
@@ -1580,7 +1580,8 @@ function renderDynamicOptions(product) {
   } else if (category === "Food") {
     const fp = product.foodPrices || {};
     const fullP = Number(fp.full) || 0, halfP = Number(fp.half) || 0, pieceP = Number(fp.piece) || 0;
-    let opts = "";
+    const fv = Array.isArray(product.foodVariants) ? product.foodVariants.filter((v) => v && v.label && Number(v.price) > 0) : [];
+    let opts = fv.map((v) => `<option value="${esc(v.label)}" data-price="${Number(v.price)}">${esc(v.label)} (৳${fmt(v.price)})</option>`).join("");
     if (fullP > 0) opts += `<option value="ফুল প্লেট" data-price="${fullP}">ফুল প্লেট (৳${fullP})</option>`;
     if (halfP > 0) opts += `<option value="হাফ প্লেট" data-price="${halfP}">হাফ প্লেট (৳${halfP})</option>`;
     if (pieceP > 0) opts += `<option value="পিস" data-price="${pieceP}">পিস (৳${pieceP})</option>`;
@@ -1598,7 +1599,7 @@ function renderDynamicOptions(product) {
 
   html += `
     <div class="qty">
-      <span>কত পিস</span>
+      <span>${category === "Cosmetics" && product.sellUnit ? "কত " + esc(product.sellUnit) : (category === "Grocery" || category === "Food") ? "কয়টি (এই মাপের)" : "কত পিস"}</span>
       <div>
         <button type="button" data-qty="-1" aria-label="কমান">−</button>
         <output id="qtyDisplay" aria-live="polite">1</output>
@@ -1659,7 +1660,8 @@ $("#checkoutForm").addEventListener("submit", async (e) => {
     }
   } else if (selectedProduct.category === "Cosmetics") {
     const cs = $("#cosmeticsSize");
-    customDetails = cs ? `সাইজ: ${cs.value}, পিস: ${quantity}` : `পিস: ${quantity}`;
+    const su = selectedProduct.sellUnit;
+    customDetails = cs ? `${selectedProduct.sizeLabel || "সাইজ"}: ${cs.value}, পিস: ${quantity}` : (su ? `পরিমাণ: ${quantity} ${su}` : `পিস: ${quantity}`);
   } else if (selectedProduct.category === "Food") {
     const fs = $("#foodSize");
     if (fs) {
