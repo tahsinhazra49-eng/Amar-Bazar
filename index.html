@@ -213,6 +213,8 @@ ul{padding:0;list-style:none}
 .card{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 24px -16px rgba(16,24,40,.22)}
 .card-media{position:relative;display:block;width:100%;aspect-ratio:1/1;background:linear-gradient(160deg,#f6f2ee,#ece7e2);cursor:zoom-in;overflow:hidden}
 .card-media img{width:100%;height:100%;object-fit:cover;display:block}
+.card.is-focus{border:2px solid var(--brand,#e63946);box-shadow:0 0 0 4px rgba(230,57,70,.14),0 10px 24px -12px rgba(16,24,40,.3)}
+.card.is-focus::before{content:"আপনার দেখা প্রোডাক্ট";position:absolute;top:8px;left:8px;z-index:3;background:#e63946;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
 .card.oos .card-media img{filter:grayscale(1);opacity:.55}
 .oos-tag{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(7,11,22,.9);color:#fff;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;white-space:nowrap}
 .badge{position:absolute;top:8px;left:8px;z-index:2;color:#fff;font-size:11px;font-weight:600;line-height:1;padding:5px 9px;border-radius:5px;background:var(--nav)}
@@ -928,7 +930,7 @@ const catLabel = (key) => (CATEGORIES.find((c) => c.key === key) || {}).label ||
 let allProducts = [];
 let selectedProduct = null;
 let quantity = 1;
-const state = { cat: "all", q: "", wish: false, showAll: false };
+const state = { cat: "all", q: "", wish: false, showAll: false, focusId: null };
 
 const safeGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
@@ -1084,7 +1086,7 @@ function priceRow(info) {
 function cardHTML(p) {
   const info = priceInfo(p);
   return `
-    <article class="card ${p.inStock ? "" : "oos"}">
+    <article class="card ${p.inStock ? "" : "oos"} ${p.id === state.focusId ? "is-focus" : ""}">
       ${mediaHTML(p, info.pct)}
       <div class="card-body">
         ${metaRow(p)}
@@ -1119,6 +1121,8 @@ function filteredList() {
   if (state.wish) list = list.filter((p) => wishlist.has(p.id));
   if (state.cat !== "all") list = list.filter((p) => p.category === state.cat);
   if (q) list = list.filter((p) => (p.name || "").toLowerCase().includes(q));
+  // বিজ্ঞাপনের লিংক থেকে আসলে সেই প্রোডাক্টটি সবার আগে দেখাবে
+  if (state.focusId && !q && !state.wish) list = [...list].sort((a, b) => (b.id === state.focusId) - (a.id === state.focusId));
   return list;
 }
 const isFiltering = () => state.cat !== "all" || !!state.q.trim() || state.wish;
@@ -1221,14 +1225,14 @@ function scrollToProducts() {
 
 function setCategory(cat) {
   const prev = state.wish ? "__wish" : state.cat;
-  state.wish = false; state.q = ""; state.showAll = false;
+  state.wish = false; state.q = ""; state.showAll = false; state.focusId = null;
   $("#searchInput").value = "";
   state.cat = cat;
   commitView(cat !== "all" && cat !== prev);
   syncChrome(); render(); scrollToProducts();
 }
 function goHome() {
-  state.cat = "all"; state.q = ""; state.wish = false; state.showAll = false;
+  state.cat = "all"; state.q = ""; state.wish = false; state.showAll = false; state.focusId = null;
   $("#searchInput").value = "";
   commitView(false);
   syncChrome(); render();
@@ -1445,6 +1449,21 @@ function updatePromos() {
 /* ==========================================================================
    Data
    ========================================================================== */
+/* ফেসবুক অ্যাড লিংক: ?p=প্রোডাক্ট-আইডি  (অথবা শুধু ক্যাটাগরি: ?cat=Cosmetics) */
+function applyDeepLink() {
+  const sp = new URLSearchParams(location.search);
+  const pid = sp.get("p");
+  const catKey = sp.get("cat");
+  const p = pid ? allProducts.find((x) => x.id === pid) : null;
+  if (p) { state.cat = p.category; state.focusId = p.id; }
+  else if (catKey && CATEGORIES.some((c) => c.key === catKey)) { state.cat = catKey; }
+  else return;
+  state.q = ""; state.wish = false; state.showAll = false;
+  history.replaceState(viewState(), "", location.href);
+  syncChrome(); render();
+  setTimeout(scrollToProducts, 200);
+}
+
 async function loadProducts() {
   skeletons();
   try {
@@ -1453,6 +1472,7 @@ async function loadProducts() {
     $("#productsGrid").dataset.loaded = "1";
     updatePromos();
     render();
+    applyDeepLink();
   } catch (err) {
     $("#productsGrid").innerHTML = `<div class="empty">${ico("box")}<strong>ডেটা লোড করতে সমস্যা হয়েছে</strong><p>ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।</p><button class="btn btn-dark btn-sm" id="retryBtn">আবার চেষ্টা করুন</button></div>`;
     $("#retryBtn").addEventListener("click", loadProducts);
