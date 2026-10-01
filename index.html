@@ -213,6 +213,20 @@ ul{padding:0;list-style:none}
 .card{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 24px -16px rgba(16,24,40,.22)}
 .card-media{position:relative;display:block;width:100%;aspect-ratio:1/1;background:linear-gradient(160deg,#f6f2ee,#ece7e2);cursor:zoom-in;overflow:hidden}
 .card-media img{width:100%;height:100%;object-fit:cover;display:block}
+.pp{position:fixed;inset:0;z-index:50;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
+.pp.is-open{display:block}
+.pp-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.pp-bar b{font-size:15px;font-weight:700}
+.pp-x{width:40px;height:40px;border-radius:50%;background:var(--soft);font-size:18px;line-height:1;display:grid;place-items:center;flex:none}
+.pp-wrap{max-width:var(--container);margin:0 auto;padding:0 16px 48px}
+.pp-main{display:grid;gap:16px;padding-top:14px}
+.pp-hero{position:relative;border-radius:16px;overflow:hidden}
+.pp-info h1{font-size:22px;line-height:1.35;margin:0 0 8px;font-weight:700}
+.pp-info .price b{font-size:26px}
+.pp-meta{display:grid;gap:6px;margin:14px 0;font-size:14px;color:var(--ink-2);white-space:pre-line}
+.pp-order{width:100%;padding:16px;font-size:16px}
+.pp-h{font-size:18px;font-weight:700;margin:30px 0 12px}
+@media(min-width:800px){.pp-main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:32px}}
 .card.is-focus{border:2px solid var(--brand,#e63946);box-shadow:0 0 0 4px rgba(230,57,70,.14),0 10px 24px -12px rgba(16,24,40,.3)}
 .card.is-focus::before{content:"আপনার দেখা প্রোডাক্ট";position:absolute;top:8px;left:8px;z-index:3;background:#e63946;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
 .card.oos .card-media img{filter:grayscale(1);opacity:.55}
@@ -860,6 +874,11 @@ textarea.input{resize:vertical;min-height:70px}
   </div>
 </div>
 
+<div class="pp" id="productPage" role="dialog" aria-modal="true" aria-label="প্রোডাক্টের বিবরণ">
+  <div class="pp-bar"><b id="ppCat"></b><button type="button" class="pp-x" data-action="close-product" aria-label="বন্ধ করুন">✕</button></div>
+  <div class="pp-wrap" id="ppBody"></div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span></div>
 
 <script type="module">
@@ -963,7 +982,8 @@ let lastFocus = null;
 
 const sidebarOpen = () => $("#sidebar").classList.contains("is-open");
 const openModalEl = () => MODALS.map((id) => $("#" + id)).find((el) => el.classList.contains("is-open"));
-const syncLock = () => document.documentElement.classList.toggle("lock", !!openModalEl() || sidebarOpen());
+const syncLock = () => document.documentElement.classList.toggle("lock", !!openModalEl() || sidebarOpen() || productPageOpen());
+function productPageOpen() { return $("#productPage").classList.contains("is-open"); }
 
 function openModal(id) {
   lastFocus = document.activeElement;
@@ -1018,10 +1038,18 @@ window.addEventListener("popstate", (e) => {
   syncLock();
   if (!closed) {
     const st = e.state || { page: "home" };
+    if (st.page === "product") {
+      state.wish = false; state.cat = st.cat || "all";
+      syncChrome(); render(); showProductPage(st.id);
+      return;
+    }
+    const wasProduct = productPageOpen();
+    hideProductPage();
     state.wish = st.page === "wish";
     state.cat = st.page === "category" ? st.cat : "all";
     syncChrome();
     render();
+    if (wasProduct && st.page === "category") setTimeout(scrollToProducts, 60);
   }
 });
 
@@ -1030,6 +1058,7 @@ document.addEventListener("keydown", (e) => {
   const m = openModalEl();
   if (m) closeModal(m.id);
   else if (sidebarOpen()) closeSidebar();
+  else if (productPageOpen()) closeProductPage();
   closeDropdown();
 });
 
@@ -1257,6 +1286,7 @@ document.addEventListener("click", (e) => {
   const { action, id, cat, modal } = t.dataset;
   switch (action) {
     case "order": openCheckoutModal(id); break;
+    case "close-product": closeProductPage(); break;
     case "zoom": {
       const p = allProducts.find((x) => x.id === id);
       if (p) { $("#zoomedImage").src = p.imageUrl; $("#zoomedImage").alt = p.name; openModal("imageModal"); }
@@ -1449,19 +1479,66 @@ function updatePromos() {
 /* ==========================================================================
    Data
    ========================================================================== */
-/* ফেসবুক অ্যাড লিংক: ?p=প্রোডাক্ট-আইডি  (অথবা শুধু ক্যাটাগরি: ?cat=Cosmetics) */
+/* ==========================================================================
+   প্রোডাক্ট পেজ (ফেসবুক অ্যাড লিংক: ?p=প্রোডাক্ট-আইডি, অথবা শুধু ?cat=Cosmetics)
+   ব্যাক বাটন: প্রোডাক্ট → ক্যাটাগরি → হোম
+   ========================================================================== */
+function productPageHTML(p) {
+  const info = priceInfo(p);
+  let meta = "";
+  if (p.quality) meta += `<div><strong>কোয়ালিটি:</strong> ${esc(p.quality)}</div>`;
+  if (p.brand) meta += `<div><strong>ব্র্যান্ড:</strong> ${esc(p.brand)}${p.model ? " - " + esc(p.model) : ""}</div>`;
+  if (p.warranty) meta += `<div><strong>ওয়ারেন্টি:</strong> ${esc(p.warranty)}</div>`;
+  if (p.description) meta += `<div><strong>বিবরণ:</strong> ${esc(p.description)}</div>`;
+  const others = allProducts.filter((x) => x.category === p.category && x.id !== p.id);
+  return `
+    <div class="pp-main">
+      <div class="pp-hero">${mediaHTML(p, info.pct)}</div>
+      <div class="pp-info">
+        <h1>${esc(p.name)}</h1>
+        ${priceRow(info)}
+        ${meta ? `<div class="pp-meta">${meta}</div>` : ""}
+        <button type="button" class="btn btn-dark pp-order" data-action="order" data-id="${esc(p.id)}" ${p.inStock ? "" : "disabled"}>${ico("cart")} ${p.inStock ? "অর্ডার করুন" : "স্টক শেষ"}</button>
+      </div>
+    </div>
+    ${others.length ? `<h2 class="pp-h">${esc(catLabel(p.category))} — আরও প্রোডাক্ট</h2><div class="grid">${others.map(cardHTML).join("")}</div>` : ""}`;
+}
+function showProductPage(id) {
+  const p = allProducts.find((x) => x.id === id);
+  if (!p) return false;
+  $("#ppCat").textContent = catLabel(p.category);
+  $("#ppBody").innerHTML = productPageHTML(p);
+  const el = $("#productPage");
+  el.classList.add("is-open");
+  el.scrollTop = 0;
+  syncLock();
+  return true;
+}
+function hideProductPage() {
+  $("#productPage").classList.remove("is-open");
+  syncLock();
+}
+function closeProductPage() {
+  if (history.state && history.state.page === "product") history.back();
+  else { hideProductPage(); scrollToProducts(); }
+}
 function applyDeepLink() {
   const sp = new URLSearchParams(location.search);
-  const pid = sp.get("p");
+  const p = sp.get("p") ? allProducts.find((x) => x.id === sp.get("p")) : null;
   const catKey = sp.get("cat");
-  const p = pid ? allProducts.find((x) => x.id === pid) : null;
-  if (p) { state.cat = p.category; state.focusId = p.id; }
-  else if (catKey && CATEGORIES.some((c) => c.key === catKey)) { state.cat = catKey; }
-  else return;
-  state.q = ""; state.wish = false; state.showAll = false;
-  history.replaceState(viewState(), "", location.href);
+  let cat = null;
+  if (p) cat = p.category;
+  else if (catKey && CATEGORIES.some((c) => c.key === catKey)) cat = catKey;
+  if (!cat) return;
+  state.q = ""; state.wish = false; state.showAll = false; state.focusId = null; state.cat = cat;
+  // হিস্ট্রি: হোম → ক্যাটাগরি → (প্রোডাক্ট)
+  history.replaceState({ page: "home" }, "", location.href);
+  history.pushState({ page: "category", cat }, "", location.href);
   syncChrome(); render();
-  setTimeout(scrollToProducts, 200);
+  if (p) {
+    history.pushState({ page: "product", id: p.id, cat }, "", location.href);
+    showProductPage(p.id);
+  } else setTimeout(scrollToProducts, 200);
 }
 
 async function loadProducts() {
