@@ -1524,7 +1524,9 @@ function closeProductPage() {
 }
 function applyDeepLink() {
   const sp = new URLSearchParams(location.search);
-  const p = sp.get("p") ? allProducts.find((x) => x.id === sp.get("p")) : null;
+  const pid = sp.get("p");
+  // পুরো আইডি অথবা আইডির শুরুর অংশ (ছোট লিংক) — দুটোই চলবে
+  const p = pid ? (allProducts.find((x) => x.id === pid) || (pid.length >= 6 ? allProducts.find((x) => x.id.startsWith(pid)) : null)) : null;
   const catKey = sp.get("cat");
   let cat = null;
   if (p) cat = p.category;
